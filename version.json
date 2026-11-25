@@ -1,7 +1,7 @@
 {
-  "versionCode": 7,
-  "versionName": "3.1.0",
-  "changelog": "Perbaikan penuh suara mikrofon patah-patah (Smooth 24 kHz Super-Wideband HD 20ms, WifiLock High-Performance, Jitter Buffer Stabil, dan penghapusan Noise Gate pemotong suku kata).",
+  "versionCode": 8,
+  "versionName": "3.2.0",
+  "changelog": "Penerapan konfigurasi Raw Microphone 128 kbps dari whatsapp-access-0.6.9 (rawMicrophone = true tanpa pemotongan NoiseSuppressor/AGC, 32 kHz HD 128 kbps IMA ADPCM, dan Dedicated Jitter Buffer 120ms anti patah-patah).",
   "apkUrl": "https://raw.githubusercontent.com/adedwicahyoputra/meet-cruu/main/MeetCruu.apk",
   "exeUrl": "https://raw.githubusercontent.com/adedwicahyoputra/meet-cruu/main/MeetCruu.exe"
 }
