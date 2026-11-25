@@ -1,0 +1,17 @@
+{
+  "name": "Meet Cruu",
+  "short_name": "Meet Cruu",
+  "description": "Meet Cruu - Dikembangkan oleh Ade masih care • Developer",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0D1117",
+  "theme_color": "#161B22",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}

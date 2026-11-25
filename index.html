@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Meet Cruu" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <title>Meet Cruu</title>
+  <style>
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+      margin: 0;
+      padding: 18px;
+      background-color: #0D1117;
+      color: #FFFFFF;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+      font-size: 18px;
+      line-height: 1.45;
+    }
+    h1 { margin: 0; font-size: 26px; font-weight: 700; color: #FFFFFF; }
+    .dev-credit {
+      margin: 4px 0 22px 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: #58A6FF;
+    }
+    .screen { display: none; }
+    .screen.active { display: block; }
+    label.field-label {
+      display: block;
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: #FFFFFF;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 16px;
+      font-size: 18px;
+      color: #FFFFFF;
+      background-color: #161B22;
+      border: 2px solid #30363D;
+      border-radius: 12px;
+      margin-bottom: 16px;
+    }
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 16px 18px;
+      font-size: 18px;
+      font-weight: 700;
+      text-align: center;
+      color: #FFFFFF;
+      background-color: #21262D;
+      border: 2px solid #30363D;
+      border-radius: 14px;
+      margin-bottom: 14px;
+      cursor: pointer;
+    }
+    .btn-giant { padding: 20px 18px; font-size: 20px; }
+    .btn-blue { background-color: #1F6FEB; color: #FFFFFF; }
+    .btn-green { background-color: #2EA043; color: #FFFFFF; }
+    .btn-amber { background-color: #D29922; color: #000000; }
+    .btn-red { background-color: #DA3633; color: #FFFFFF; }
+    .btn-gray { background-color: #30363D; color: #FFFFFF; }
+    .live-banner {
+      background-color: #161B22;
+      border: 2px solid #58A6FF;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 14px;
+      font-size: 17px;
+    }
+    .host-panel {
+      background-color: #161B22;
+      border: 2px solid #D29922;
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+    .host-panel h2 {
+      margin: 0 0 10px 0;
+      font-size: 18px;
+      color: #E3B341;
+    }
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #0D1117;
+      z-index: 999;
+      padding: 18px;
+      overflow-y: auto;
+    }
+    .modal-overlay.active { display: block; }
+    .list-item {
+      background-color: #161B22;
+      border: 1px solid #30363D;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===================================================================== -->
+  <!-- HALAMAN 1: BERANDA MEET CRUU (EDISI IPHONE / IOS VOICEOVER)           -->
+  <!-- ===================================================================== -->
+  <main id="screen-home" class="screen active" role="main">
+    <h1 role="heading" aria-level="1">Meet Cruu</h1>
+    <div class="dev-credit" aria-label="Meet Cruu, dikembangkan oleh Ade masih care, Developer.">
+      Dikembangkan oleh Ade masih care • Developer
+    </div>
+
+    <label class="field-label" for="et-name">Nama Anda di Rapat</label>
+    <input type="text" id="et-name" placeholder="Ketik nama Anda" aria-label="Nama Anda di Rapat" />
+
+    <button
+      type="button"
+      class="btn btn-giant btn-blue"
+      aria-label="Rapat baru. Buat ruang rapat baru dan otomatis menjadi penyelenggara atau admin rapat."
+      onclick="openNewMeetingSheet()"
+    >
+      Rapat baru
+    </button>
+
+    <label class="field-label" for="et-code" style="margin-top: 14px;">Atau gabung dengan kode rapat</label>
+    <input type="text" id="et-code" placeholder="Contoh: abc-defg-hij" aria-label="Kode rapat untuk bergabung" />
+
+    <button
+      type="button"
+      class="btn btn-green"
+      aria-label="Gabung ke rapat dengan kode yang dimasukkan."
+      onclick="joinByCodeClicked()"
+    >
+      Gabung
+    </button>
+  </main>
+
+  <!-- ===================================================================== -->
+  <!-- HALAMAN 2: PERSIAPAN MASUK (GREENROOM GOOGLE MEET)                    -->
+  <!-- ===================================================================== -->
+  <section id="screen-greenroom" class="screen" role="region" aria-label="Persiapan sebelum masuk rapat">
+    <h1 id="gr-title" role="heading" aria-level="1">Rapat</h1>
+    <div id="gr-sub" class="dev-credit">Siap bergabung ke rapat</div>
+
+    <button
+      type="button"
+      id="btn-gr-mic"
+      class="btn btn-giant btn-green"
+      onclick="toggleGreenroomMic()"
+    >
+      Mikrofon: Aktif
+    </button>
+
+    <button
+      type="button"
+      id="btn-gr-share"
+      class="btn"
+      onclick="shareCurrentRoomCode()"
+    >
+      Bagikan info gabung
+    </button>
+
+    <button
+      type="button"
+      class="btn btn-giant btn-green"
+      aria-label="Gabung sekarang ke ruang rapat"
+      onclick="enterMeetingNow()"
+    >
+      Gabung sekarang
+    </button>
+
+    <button
+      type="button"
+      class="btn"
+      aria-label="Kembali ke beranda"
+      onclick="showScreen('screen-home')"
+    >
+      Kembali
+    </button>
+  </section>
+
+  <!-- ===================================================================== -->
+  <!-- HALAMAN 3: RUANG RAPAT UTAMA (TERSAMBUNG KE ANDROID & WINDOWS)        -->
+  <!-- ===================================================================== -->
+  <section id="screen-meeting" class="screen" role="region" aria-label="Ruang Rapat Meet Cruu">
+    <h1 id="mt-title" role="heading" aria-level="1">Rapat</h1>
+    <div id="mt-stats" style="color: #8B949E; font-size: 15px; margin: 2px 0 12px 0;">
+      1 orang dalam panggilan • 0 angkat tangan
+    </div>
+
+    <div id="live-banner" class="live-banner" role="status" aria-live="assertive" aria-atomic="true">
+      Menyambungkan ke panggilan...
+    </div>
+
+    <button
+      type="button"
+      id="btn-mt-mic"
+      class="btn btn-giant btn-green"
+      onclick="toggleMeetingMic()"
+    >
+      Mikrofon: Aktif (Ketuk untuk bisu)
+    </button>
+
+    <button
+      type="button"
+      id="btn-mt-hand"
+      class="btn btn-blue"
+      onclick="toggleMeetingHand()"
+    >
+      Angkat tangan
+    </button>
+
+    <button
+      type="button"
+      id="btn-mt-chat"
+      class="btn"
+      onclick="openChatDialog()"
+    >
+      Pesan dalam panggilan (0)
+    </button>
+
+    <button
+      type="button"
+      id="btn-mt-people"
+      class="btn"
+      onclick="openPeopleDialog()"
+    >
+      Orang (1) • Antrean tangan (0)
+    </button>
+
+    <!-- KONTROL PENYELENGGARA (HANYA MUNCUL JIKA PEMBUAT RUANGAN / HOST) -->
+    <div id="host-controls-box" class="host-panel" style="display: none;" role="region" aria-label="Kontrol penyelenggara rapat">
+      <h2 role="heading" aria-level="2">Kontrol penyelenggara rapat</h2>
+
+      <button
+        type="button"
+        class="btn btn-amber"
+        aria-label="Bisukan mikrofon seluruh peserta dalam rapat"
+        onclick="hostMuteAll()"
+      >
+        Bisukan semua peserta
+      </button>
+
+      <button
+        type="button"
+        id="btn-host-invite"
+        class="btn btn-gray"
+        onclick="hostInviteFirst()"
+      >
+        Belum ada yang angkat tangan
+      </button>
+
+      <button
+        type="button"
+        class="btn"
+        aria-label="Turunkan semua tangan peserta"
+        onclick="hostLowerAllHands()"
+      >
+        Turunkan semua tangan
+      </button>
+    </div>
+
+    <button
+      type="button"
+      id="btn-mt-share"
+      class="btn"
+      onclick="shareCurrentRoomCode()"
+    >
+      Bagikan info gabung
+    </button>
+
+    <button
+      type="button"
+      class="btn btn-red"
+      aria-label="Keluar dari panggilan rapat"
+      onclick="leaveMeeting()"
+    >
+      Keluar dari panggilan
+    </button>
+  </section>
+
+  <!-- DIALOG MENU RAPAT BARU -->
+  <div id="modal-new-meeting" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Rapat baru">
+    <h2 role="heading" aria-level="2">Rapat baru</h2>
+    <button type="button" class="btn btn-blue" onclick="startInstantNewMeeting()">Mulai rapat instan</button>
+    <button type="button" class="btn btn-green" onclick="createAndShareNewMeeting()">Dapatkan info gabung untuk dibagikan</button>
+    <button type="button" class="btn" onclick="closeModal('modal-new-meeting')">Batal</button>
+  </div>
+
+  <!-- DIALOG PESAN DALAM PANGGILAN -->
+  <div id="modal-chat" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Pesan dalam panggilan">
+    <h2 role="heading" aria-level="2">Pesan dalam panggilan</h2>
+    <div id="chat-list" style="margin: 12px 0;"></div>
+    <label class="field-label" for="et-chat">Ketik pesan untuk semua peserta</label>
+    <input type="text" id="et-chat" placeholder="Ketik pesan..." />
+    <button type="button" class="btn btn-green" onclick="sendChatMsg()">Kirim</button>
+    <button type="button" class="btn" onclick="closeModal('modal-chat')">Tutup</button>
+  </div>
+
+  <!-- DIALOG DAFTAR ORANG DALAM PANGGILAN -->
+  <div id="modal-people" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Orang dalam panggilan">
+    <h2 id="people-title" role="heading" aria-level="2">Orang dalam panggilan</h2>
+    <div id="people-list" style="margin: 12px 0;"></div>
+    <button type="button" class="btn" onclick="closeModal('modal-people')">Tutup</button>
+  </div>
+
+  <script>
+    // =========================================================================
+    // ENGINE MEET CRUU EDISI IOS / IPHONE (48.000 Hz FULLBAND HD + STUDIO DSP)
+    // 100% Kompatibel dengan MeetCruu.apk (Android) & MeetCruu.exe (Windows)
+    // =========================================================================
+    const SAMPLE_RATE = 48000;
+    const FRAME_SAMPLES = 480; // 10ms @ 48kHz
+    const CLOUD_WS_URL = "wss://broker.emqx.io:8084/mqtt";
+
+    const localPeerId = Math.random().toString(36).substring(2, 10);
+    let createdRoomsByMe = new Set();
+    let currentDisplayName = "";
+    let currentRoomCode = "";
+    let currentIsHost = false;
+    let greenroomMicMuted = false;
+
+    let isRunning = false;
+    let isMicMuted = false;
+    let audioSeqCounter = 1;
+    let lastPlayedSeqByPeer = {};
+
+    let participants = {};
+    let chatMessages = [];
+
+    let wsClient = null;
+    let audioCtx = null;
+    let mediaStream = null;
+    let scriptProcessor = null;
+    let nextPlayTime = 0;
+
+    // State Studio Voice DSP Default
+    let hpfPrevIn = 0.0;
+    let hpfPrevOut = 0.0;
+    let clarityPrev = 0.0;
+    let gateEnvelope = 0.0;
+    let agcGain = 1.35;
+
+    window.onload = function () {
+      try {
+        const savedName = localStorage.getItem("mc_ios_name") || "";
+        const savedRooms = JSON.parse(localStorage.getItem("mc_ios_rooms") || "[]");
+        if (savedName) document.getElementById("et-name").value = savedName;
+        savedRooms.forEach(r => createdRoomsByMe.add(r));
+      } catch (_) {}
+    };
+
+    function saveProfile() {
+      try {
+        localStorage.setItem("mc_ios_name", currentDisplayName);
+        localStorage.setItem("mc_ios_rooms", JSON.stringify(Array.from(createdRoomsByMe)));
+      } catch (_) {}
+    }
+
+    function playEarcon(fileName) {
+      try {
+        const a = new Audio("sounds/" + fileName);
+        a.volume = 0.85;
+        a.play().catch(function () {});
+      } catch (_) {}
+    }
+
+    function announceVoiceOver(text) {
+      const b = document.getElementById("live-banner");
+      if (b) b.textContent = text;
+      try {
+        if ("speechSynthesis" in window) {
+          window.speechSynthesis.cancel();
+          const u = new SpeechSynthesisUtterance(text);
+          u.lang = "id-ID";
+          u.rate = 1.08;
+          window.speechSynthesis.speak(u);
+        }
+      } catch (_) {}
+    }
+
+    function showScreen(id) {
+      document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+      document.getElementById(id).classList.add("active");
+      window.scrollTo(0, 0);
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove("active");
+    }
+
+    function generateGoogleMeetCode() {
+      const letters = "abcdefghjkmnpqrstuvwxyz";
+      const pick = n => Array.from({ length: n }, () => letters[Math.floor(Math.random() * letters.length)]).join("");
+      return pick(3) + "-" + pick(4) + "-" + pick(3);
+    }
+
+    function normalizeCode(raw) {
+      return (raw || "").trim().toLowerCase().replace(/[^a-z0-9-]/g, "");
+    }
+
+    function openNewMeetingSheet() {
+      const name = document.getElementById("et-name").value.trim();
+      if (!name) {
+        announceVoiceOver("Mohon isi nama Anda terlebih dahulu.");
+        document.getElementById("et-name").focus();
+        return;
+      }
+      currentDisplayName = name;
+      saveProfile();
+      document.getElementById("modal-new-meeting").classList.add("active");
+    }
+
+    function startInstantNewMeeting() {
+      closeModal("modal-new-meeting");
+      const code = generateGoogleMeetCode();
+      createdRoomsByMe.add(code);
+      currentRoomCode = code;
+      currentIsHost = true;
+      saveProfile();
+      playEarcon("Vf6.wav");
+      openGreenroom();
+    }
+
+    function createAndShareNewMeeting() {
+      closeModal("modal-new-meeting");
+      const code = generateGoogleMeetCode();
+      createdRoomsByMe.add(code);
+      currentRoomCode = code;
+      currentIsHost = true;
+      saveProfile();
+      playEarcon("Vf6.wav");
+      shareCurrentRoomCode();
+      openGreenroom();
+    }
+
+    function joinByCodeClicked() {
+      const name = document.getElementById("et-name").value.trim();
+      const code = normalizeCode(document.getElementById("et-code").value);
+      if (!name) {
+        announceVoiceOver("Mohon isi nama Anda terlebih dahulu.");
+        document.getElementById("et-name").focus();
+        return;
+      }
+      if (!code) {
+        announceVoiceOver("Mohon masukkan kode rapat terlebih dahulu.");
+        document.getElementById("et-code").focus();
+        return;
+      }
+      currentDisplayName = name;
+      currentRoomCode = code;
+      currentIsHost = createdRoomsByMe.has(code);
+      saveProfile();
+      openGreenroom();
+    }
+
+    function openGreenroom() {
+      document.getElementById("gr-title").textContent = "Rapat " + currentRoomCode;
+      const roleStatus = currentIsHost ? "Anda adalah penyelenggara rapat ini" : "Siap bergabung ke rapat";
+      document.getElementById("gr-sub").textContent = roleStatus + " • " + currentDisplayName;
+      document.getElementById("btn-gr-share").textContent = "Bagikan info gabung (" + currentRoomCode + ")";
+      updateGreenroomMicBtn();
+      showScreen("screen-greenroom");
+      announceVoiceOver("Halaman persiapan rapat " + currentRoomCode + ". " + roleStatus + ".");
+    }
+
+    function toggleGreenroomMic() {
+      greenroomMicMuted = !greenroomMicMuted;
+      updateGreenroomMicBtn();
+      playEarcon(greenroomMicMuted ? "vP6.wav" : "JZN.wav");
+      announceVoiceOver(greenroomMicMuted ? "Mikrofon dinonaktifkan" : "Mikrofon diaktifkan");
+    }
+
+    function updateGreenroomMicBtn() {
+      const btn = document.getElementById("btn-gr-mic");
+      btn.textContent = greenroomMicMuted ? "Mikrofon: Nonaktif (Bisu)" : "Mikrofon: Aktif";
+      btn.className = greenroomMicMuted ? "btn btn-giant btn-gray" : "btn btn-giant btn-green";
+    }
+
+    function shareCurrentRoomCode() {
+      const text = "Untuk bergabung ke rapat di Meet Cruu, masukkan kode ini: " + currentRoomCode;
+      if (navigator.share) {
+        navigator.share({ title: "Meet Cruu", text: text }).catch(function () {});
+      } else if (navigator.clipboard) {
+        navigator.clipboard.writeText(currentRoomCode);
+        announceVoiceOver("Kode rapat " + currentRoomCode + " disalin.");
+      }
+    }
+
+    // =========================================================================
+    // RUANG RAPAT & KOMUNIKASI REAL-TIME LINTAS PLATFORM
+    // =========================================================================
+    function enterMeetingNow() {
+      isMicMuted = greenroomMicMuted;
+      isRunning = true;
+      participants = {};
+      chatMessages = [];
+      lastPlayedSeqByPeer = {};
+
+      participants[localPeerId] = {
+        id: localPeerId,
+        name: currentDisplayName,
+        isHost: currentIsHost,
+        isLocal: true,
+        isMuted: isMicMuted,
+        isHandRaised: false,
+        handRaisedTimestamp: 0
+      };
+
+      document.getElementById("mt-title").textContent = "Rapat: " + currentRoomCode;
+      document.getElementById("btn-mt-share").textContent = "Bagikan info gabung (" + currentRoomCode + ")";
+      document.getElementById("host-controls-box").style.display = currentIsHost ? "block" : "none";
+
+      showScreen("screen-meeting");
+      refreshMeetingUI();
+
+      startWebAudio48kEngine();
+      startMqttWebSocketEngine();
+
+      playEarcon("Yn3.wav");
+      announceVoiceOver(
+        currentIsHost
+          ? "Terhubung ke rapat " + currentRoomCode + " sebagai penyelenggara rapat."
+          : "Terhubung ke rapat " + currentRoomCode + "."
+      );
+    }
+
+    function leaveMeeting() {
+      broadcastSignal("LEAVE", "");
+      isRunning = false;
+      try { if (wsClient) { wsClient.close(); wsClient = null; } } catch (_) {}
+      stopWebAudio48kEngine();
+      playEarcon("rOP.ogg");
+      announceVoiceOver("Anda keluar dari panggilan rapat.");
+      showScreen("screen-home");
+    }
+
+    function toggleMeetingMic() {
+      isMicMuted = !isMicMuted;
+      if (participants[localPeerId]) participants[localPeerId].isMuted = isMicMuted;
+      broadcastSignal("MIC", "");
+      playEarcon(isMicMuted ? "vP6.wav" : "JZN.wav");
+      announceVoiceOver(isMicMuted ? "Mikrofon nonaktif" : "Mikrofon aktif");
+      refreshMeetingUI();
+    }
+
+    function toggleMeetingHand() {
+      const loc = participants[localPeerId];
+      if (!loc) return;
+      loc.isHandRaised = !loc.isHandRaised;
+      loc.handRaisedTimestamp = loc.isHandRaised ? Date.now() : 0;
+      broadcastSignal("HAND", "");
+      const qPos = getHandQueuePos(localPeerId);
+      if (loc.isHandRaised) {
+        playEarcon("W0S.wav");
+        announceVoiceOver(loc.name + " mengangkat tangan. Antrean bicara ke-" + qPos + ".");
+      } else {
+        playEarcon("sTo.ogg");
+        announceVoiceOver(loc.name + " menurunkan tangan.");
+      }
+      refreshMeetingUI();
+    }
+
+    function hostMuteAll() {
+      if (!currentIsHost) return;
+      Object.values(participants).forEach(p => { if (!p.isLocal) p.isMuted = true; });
+      broadcastSignal("HOST_MUTE_ALL", "");
+      playEarcon("Vf6.wav");
+      announceVoiceOver("Penyelenggara membisukan semua peserta.");
+      refreshMeetingUI();
+    }
+
+    function hostInviteFirst() {
+      if (!currentIsHost) return;
+      const q = getHandQueue();
+      if (q.length === 0) {
+        announceVoiceOver("Belum ada peserta yang mengangkat tangan.");
+        return;
+      }
+      const first = q[0];
+      first.isHandRaised = false;
+      first.handRaisedTimestamp = 0;
+      broadcastSignal("HOST_INVITE_SPEAK", first.name);
+      playEarcon("Vf6.wav");
+      announceVoiceOver("Penyelenggara mempersilakan " + first.name + " untuk berbicara.");
+      refreshMeetingUI();
+    }
+
+    function hostLowerAllHands() {
+      if (!currentIsHost) return;
+      Object.values(participants).forEach(p => { p.isHandRaised = false; p.handRaisedTimestamp = 0; });
+      broadcastSignal("HOST_LOWER_ALL_HANDS", "");
+      playEarcon("sTo.ogg");
+      announceVoiceOver("Penyelenggara menurunkan semua antrean angkat tangan.");
+      refreshMeetingUI();
+    }
+
+    function openChatDialog() {
+      renderChatList();
+      document.getElementById("modal-chat").classList.add("active");
+    }
+
+    function sendChatMsg() {
+      const et = document.getElementById("et-chat");
+      const txt = et.value.trim();
+      if (!txt) return;
+      chatMessages.push({ senderName: currentDisplayName + " (Anda)", text: txt, ts: Date.now() });
+      et.value = "";
+      broadcastSignal("CHAT", txt);
+      renderChatList();
+      refreshMeetingUI();
+      announceVoiceOver("Pesan terkirim: " + txt);
+    }
+
+    function renderChatList() {
+      const box = document.getElementById("chat-list");
+      if (chatMessages.length === 0) {
+        box.innerHTML = '<div class="list-item">Belum ada pesan. Setiap pesan baru otomatis dibacakan oleh VoiceOver.</div>';
+        return;
+      }
+      box.innerHTML = chatMessages.map(m =>
+        '<div class="list-item"><strong>' + m.senderName + ':</strong> ' + m.text + '</div>'
+      ).join("");
+    }
+
+    function openPeopleDialog() {
+      const sorted = getSortedParticipants();
+      document.getElementById("people-title").textContent = "Orang dalam panggilan (" + sorted.length + ")";
+      const box = document.getElementById("people-list");
+      box.innerHTML = sorted.map(p => {
+        const hostTag = p.isHost ? " (Penyelenggara)" : "";
+        const meTag = p.isLocal ? " (Anda)" : "";
+        const micTag = p.isMuted ? " • Bisu" : " • Mikrofon Aktif";
+        const handTag = p.isHandRaised ? (" • ANGKAT TANGAN (Antrean " + getHandQueuePos(p.id) + ")") : "";
+        return '<div class="list-item">' + p.name + meTag + hostTag + micTag + handTag + '</div>';
+      }).join("");
+      document.getElementById("modal-people").classList.add("active");
+    }
+
+    function getHandQueue() {
+      return Object.values(participants)
+        .filter(p => p.isHandRaised)
+        .sort((a, b) => a.handRaisedTimestamp - b.handRaisedTimestamp);
+    }
+
+    function getHandQueuePos(id) {
+      const q = getHandQueue();
+      const idx = q.findIndex(p => p.id === id);
+      return idx >= 0 ? idx + 1 : 1;
+    }
+
+    function getSortedParticipants() {
+      return Object.values(participants).sort((a, b) => {
+        if (a.isHandRaised && !b.isHandRaised) return -1;
+        if (!a.isHandRaised && b.isHandRaised) return 1;
+        if (a.isHandRaised && b.isHandRaised) return a.handRaisedTimestamp - b.handRaisedTimestamp;
+        if (a.isHost && !b.isHost) return -1;
+        if (!a.isHost && b.isHost) return 1;
+        return a.name.localeCompare(b.name);
+      });
+    }
+
+    function refreshMeetingUI() {
+      const btnMic = document.getElementById("btn-mt-mic");
+      btnMic.textContent = isMicMuted ? "Mikrofon: Nonaktif (Ketuk untuk bicara)" : "Mikrofon: Aktif (Ketuk untuk bisu)";
+      btnMic.className = isMicMuted ? "btn btn-giant btn-gray" : "btn btn-giant btn-green";
+
+      const hand = participants[localPeerId] && participants[localPeerId].isHandRaised;
+      const btnHand = document.getElementById("btn-mt-hand");
+      btnHand.textContent = hand ? "Turunkan tangan" : "Angkat tangan";
+      btnHand.className = hand ? "btn btn-amber" : "btn btn-blue";
+
+      document.getElementById("btn-mt-chat").textContent = "Pesan dalam panggilan (" + chatMessages.length + ")";
+
+      const allP = Object.values(participants);
+      const q = getHandQueue();
+      document.getElementById("btn-mt-people").textContent = "Orang (" + allP.length + ") • Antrean tangan (" + q.length + ")";
+      document.getElementById("mt-stats").textContent = allP.length + " orang dalam panggilan • " + q.length + " angkat tangan";
+
+      if (currentIsHost) {
+        const btnInv = document.getElementById("btn-host-invite");
+        if (q.length === 0) {
+          btnInv.textContent = "Belum ada yang angkat tangan";
+          btnInv.className = "btn btn-gray";
+        } else {
+          btnInv.textContent = "Persilakan bicara: " + q[0].name + " (Antrean 1)";
+          btnInv.className = "btn btn-green";
+        }
+      }
+    }
+
+    // =========================================================================
+    // KONEKSI MQTT WEBSOCKET MURNI KE BROKER.EMQX.IO (TERHUBUNG KE ANDROID & PC)
+    // =========================================================================
+    function startMqttWebSocketEngine() {
+      const sigTopic = "meetcruu/v2/sig/" + currentRoomCode;
+      const audTopic = "meetcruu/v2/aud/" + currentRoomCode;
+
+      try {
+        wsClient = new WebSocket(CLOUD_WS_URL, "mqtt");
+        wsClient.binaryType = "arraybuffer";
+
+        wsClient.onopen = function () {
+          const clientId = "mcios_" + localPeerId + "_" + (Date.now() % 10000);
+          wsClient.send(buildMqttConnect(clientId));
+          setTimeout(function () {
+            if (wsClient && wsClient.readyState === 1) {
+              wsClient.send(buildMqttSubscribe(1, sigTopic));
+              wsClient.send(buildMqttSubscribe(2, audTopic));
+              broadcastSignal("JOIN", "");
+            }
+          }, 250);
+        };
+
+        wsClient.onmessage = function (evt) {
+          const bytes = new Uint8Array(evt.data);
+          if (bytes.length < 4) return;
+          const pktType = (bytes[0] >> 4) & 0x0F;
+          if (pktType === 3) {
+            let idx = 1;
+            let mult = 1;
+            let remLen = 0;
+            let eb;
+            do {
+              eb = bytes[idx++];
+              remLen += (eb & 127) * mult;
+              mult *= 128;
+            } while ((eb & 128) !== 0 && idx < bytes.length);
+
+            const topicLen = (bytes[idx] << 8) | bytes[idx + 1];
+            idx += 2;
+            const topic = new TextDecoder().decode(bytes.subarray(idx, idx + topicLen));
+            idx += topicLen;
+            const payload = bytes.subarray(idx);
+
+            if (topic === sigTopic) {
+              const rawSig = new TextDecoder().decode(payload);
+              handleIncomingSignal(rawSig);
+            } else if (topic === audTopic) {
+              handleIncomingAudioPacket(payload);
+            }
+          }
+        };
+      } catch (_) {}
+    }
+
+    function broadcastSignal(type, payload) {
+      if (!wsClient || wsClient.readyState !== 1) return;
+      const loc = participants[localPeerId];
+      const hand = loc && loc.isHandRaised;
+      const msg = currentRoomCode + "\t"
+        + localPeerId + "\t"
+        + currentDisplayName + "\t"
+        + (currentIsHost ? "1" : "0") + "\t"
+        + (isMicMuted ? "1" : "0") + "\t"
+        + (hand ? "1" : "0") + "\t"
+        + type + "\t"
+        + (payload || "");
+      const data = new TextEncoder().encode(msg);
+      wsClient.send(buildMqttPublish("meetcruu/v2/sig/" + currentRoomCode, data));
+    }
+
+    function handleIncomingSignal(raw) {
+      const parts = raw.split("\t");
+      if (parts.length < 7) return;
+      const pktRoom = parts[0];
+      const peerId = parts[1];
+      const peerName = parts[2];
+      const peerIsHost = parts[3] === "1";
+      const peerIsMuted = parts[4] === "1";
+      const peerHand = parts[5] === "1";
+      const type = parts[6];
+      const payload = parts.slice(7).join("\t");
+
+      if (pktRoom !== currentRoomCode || peerId === localPeerId) return;
+
+      const isNew = !participants[peerId];
+      if (isNew) {
+        participants[peerId] = {
+          id: peerId,
+          name: peerName,
+          isHost: peerIsHost,
+          isLocal: false,
+          isMuted: peerIsMuted,
+          isHandRaised: false,
+          handRaisedTimestamp: 0
+        };
+      }
+      const p = participants[peerId];
+      p.name = peerName;
+      p.isHost = peerIsHost;
+      p.isMuted = peerIsMuted;
+
+      if (type === "JOIN") {
+        if (isNew) {
+          playEarcon("q1w.ogg");
+          announceVoiceOver(peerName + " bergabung ke rapat. Total " + Object.keys(participants).length + " orang.");
+          broadcastSignal("STATE_SYNC", "");
+        }
+      } else if (type === "STATE_SYNC") {
+        if (isNew) {
+          playEarcon("q1w.ogg");
+          announceVoiceOver(peerName + " bergabung ke rapat. Total " + Object.keys(participants).length + " orang.");
+        }
+      } else if (type === "LEAVE") {
+        if (participants[peerId]) {
+          delete participants[peerId];
+          playEarcon("5eb.ogg");
+          announceVoiceOver(peerName + " keluar dari rapat.");
+        }
+      } else if (type === "HAND") {
+        if (p.isHandRaised !== peerHand) {
+          p.isHandRaised = peerHand;
+          p.handRaisedTimestamp = peerHand ? Date.now() : 0;
+          const qPos = getHandQueuePos(peerId);
+          if (peerHand) {
+            playEarcon("W0S.wav");
+            announceVoiceOver(peerName + " mengangkat tangan. Antrean bicara ke-" + qPos + ".");
+          } else {
+            playEarcon("sTo.ogg");
+            announceVoiceOver(peerName + " menurunkan tangan.");
+          }
+        }
+      } else if (type === "CHAT") {
+        chatMessages.push({ senderName: peerName, text: payload, ts: Date.now() });
+        renderChatList();
+        playEarcon("3kJ.wav");
+        announceVoiceOver("Pesan dari " + peerName + ": " + payload);
+      } else if (type === "HOST_MUTE_ALL") {
+        if (!currentIsHost && !isMicMuted) {
+          isMicMuted = true;
+          if (participants[localPeerId]) participants[localPeerId].isMuted = true;
+        }
+        playEarcon("Vf6.wav");
+        announceVoiceOver("Penyelenggara " + peerName + " membisukan semua peserta.");
+      } else if (type === "HOST_INVITE_SPEAK") {
+        const isMe = payload.toLowerCase() === currentDisplayName.toLowerCase();
+        Object.values(participants).forEach(item => {
+          if (item.name.toLowerCase() === payload.toLowerCase()) {
+            item.isHandRaised = false;
+            item.handRaisedTimestamp = 0;
+          }
+        });
+        playEarcon("Vf6.wav");
+        announceVoiceOver(isMe
+          ? "Penyelenggara mempersilakan Anda berbicara sekarang."
+          : "Penyelenggara mempersilakan " + payload + " untuk berbicara.");
+      } else if (type === "HOST_LOWER_ALL_HANDS") {
+        Object.values(participants).forEach(item => { item.isHandRaised = false; item.handRaisedTimestamp = 0; });
+        playEarcon("sTo.ogg");
+        announceVoiceOver("Penyelenggara menurunkan semua antrean angkat tangan.");
+      }
+
+      refreshMeetingUI();
+    }
+
+    // =========================================================================
+    // ENGINE AUDIO 48 kHz FULLBAND + STUDIO VOICE DSP DI SAFARI IOS
+    // =========================================================================
+    function startWebAudio48kEngine() {
+      try {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AC({ sampleRate: SAMPLE_RATE });
+        nextPlayTime = audioCtx.currentTime;
+
+        navigator.mediaDevices.getUserMedia({
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true,
+            sampleRate: SAMPLE_RATE,
+            channelCount: 1
+          }
+        }).then(function (stream) {
+          mediaStream = stream;
+          const source = audioCtx.createMediaStreamSource(stream);
+          scriptProcessor = audioCtx.createScriptProcessor(1024, 1, 1);
+          source.connect(scriptProcessor);
+          scriptProcessor.connect(audioCtx.destination);
+
+          scriptProcessor.onaudioprocess = function (e) {
+            if (!isRunning || isMicMuted || !wsClient || wsClient.readyState !== 1) return;
+            const input = e.inputBuffer.getChannelData(0);
+            const pcm16 = new Int16Array(input.length);
+
+            let sumSq = 0;
+            for (let i = 0; i < input.length; i++) sumSq += input[i] * input[i];
+            const rms = Math.sqrt(sumSq / input.length);
+
+            gateEnvelope = (rms > gateEnvelope)
+              ? (0.65 * gateEnvelope + 0.35 * rms)
+              : (0.93 * gateEnvelope + 0.07 * rms);
+
+            if (gateEnvelope < 0.0045) return; // DTX
+
+            const hpfAlpha = 0.9889;
+            for (let i = 0; i < input.length; i++) {
+              const x = input[i];
+              const hpfOut = hpfAlpha * (hpfPrevOut + x - hpfPrevIn);
+              hpfPrevIn = x;
+              hpfPrevOut = hpfOut;
+
+              const highComp = hpfOut - clarityPrev;
+              clarityPrev = 0.72 * clarityPrev + 0.28 * hpfOut;
+              let y = (hpfOut + 0.38 * highComp) * 1.35;
+              if (y > 0.95) y = 0.95;
+              if (y < -0.95) y = -0.95;
+              pcm16[i] = Math.max(-32768, Math.min(32767, Math.floor(y * 32767)));
+            }
+
+            const seq = audioSeqCounter++;
+            const headBytes = new TextEncoder().encode(currentRoomCode + "|" + localPeerId + "|" + seq + "|");
+            const pcmBytes = new Uint8Array(pcm16.buffer);
+            const packet = new Uint8Array(headBytes.length + pcmBytes.length);
+            packet.set(headBytes, 0);
+            packet.set(pcmBytes, headBytes.length);
+
+            wsClient.send(buildMqttPublish("meetcruu/v2/aud/" + currentRoomCode, packet));
+          };
+        }).catch(function () {});
+      } catch (_) {}
+    }
+
+    function stopWebAudio48kEngine() {
+      try { if (scriptProcessor) { scriptProcessor.disconnect(); scriptProcessor = null; } } catch (_) {}
+      try { if (mediaStream) { mediaStream.getTracks().forEach(t => t.stop()); mediaStream = null; } } catch (_) {}
+      try { if (audioCtx) { audioCtx.close(); audioCtx = null; } } catch (_) {}
+    }
+
+    function handleIncomingAudioPacket(bytes) {
+      if (!audioCtx || !isRunning) return;
+      const headStr = new TextDecoder().decode(bytes.subarray(0, Math.min(64, bytes.length)));
+      const prefix = currentRoomCode + "|";
+      if (!headStr.startsWith(prefix)) return;
+      const sep1 = headStr.indexOf("|", prefix.length);
+      if (sep1 < 0) return;
+      const senderId = headStr.substring(prefix.length, sep1);
+      if (senderId === localPeerId) return;
+
+      const sep2 = headStr.indexOf("|", sep1 + 1);
+      const audioOffset = (sep2 > sep1 && sep2 < 48) ? (sep2 + 1) : (sep1 + 1);
+      const pcmBytes = bytes.subarray(audioOffset);
+      const sampleCount = Math.floor(pcmBytes.length / 2);
+      if (sampleCount <= 0) return;
+
+      const audioBuf = audioCtx.createBuffer(1, sampleCount, SAMPLE_RATE);
+      const ch = audioBuf.getChannelData(0);
+      const dv = new DataView(pcmBytes.buffer, pcmBytes.byteOffset, pcmBytes.byteLength);
+      for (let i = 0; i < sampleCount; i++) {
+        ch[i] = dv.getInt16(i * 2, true) / 32768.0;
+      }
+
+      const src = audioCtx.createBufferSource();
+      src.buffer = audioBuf;
+      src.connect(audioCtx.destination);
+      const now = audioCtx.currentTime;
+      if (nextPlayTime < now) nextPlayTime = now + 0.015;
+      src.start(nextPlayTime);
+      nextPlayTime += audioBuf.duration;
+    }
+
+    // Helper pembungkus paket MQTT v3.1.1 biner
+    function encodeVarLen(len) {
+      const out = [];
+      do {
+        let d = len % 128;
+        len = Math.floor(len / 128);
+        if (len > 0) d |= 0x80;
+        out.push(d);
+      } while (len > 0);
+      return out;
+    }
+
+    function buildMqttConnect(clientId) {
+      const idBytes = new TextEncoder().encode(clientId);
+      const body = [0x00, 0x04, 77, 81, 84, 84, 0x04, 0x02, 0x00, 0x3C, (idBytes.length >> 8) & 0xFF, idBytes.length & 0xFF, ...idBytes];
+      return new Uint8Array([0x10, ...encodeVarLen(body.length), ...body]);
+    }
+
+    function buildMqttSubscribe(pktId, topic) {
+      const tBytes = new TextEncoder().encode(topic);
+      const body = [(pktId >> 8) & 0xFF, pktId & 0xFF, (tBytes.length >> 8) & 0xFF, tBytes.length & 0xFF, ...tBytes, 0x00];
+      return new Uint8Array([0x82, ...encodeVarLen(body.length), ...body]);
+    }
+
+    function buildMqttPublish(topic, payloadBytes) {
+      const tBytes = new TextEncoder().encode(topic);
+      const remLen = 2 + tBytes.length + payloadBytes.length;
+      const vLen = encodeVarLen(remLen);
+      const pkt = new Uint8Array(1 + vLen.length + remLen);
+      let pos = 0;
+      pkt[pos++] = 0x30;
+      vLen.forEach(b => { pkt[pos++] = b; });
+      pkt[pos++] = (tBytes.length >> 8) & 0xFF;
+      pkt[pos++] = tBytes.length & 0xFF;
+      pkt.set(tBytes, pos);
+      pos += tBytes.length;
+      pkt.set(payloadBytes, pos);
+      return pkt;
+    }
+  </script>
+</body>
+</html>
