@@ -315,8 +315,8 @@
     // ENGINE MEET CRUU EDISI IOS / IPHONE (48.000 Hz FULLBAND HD + STUDIO DSP)
     // 100% Kompatibel dengan MeetCruu.apk (Android) & MeetCruu.exe (Windows)
     // =========================================================================
-    const SAMPLE_RATE = 48000;
-    const FRAME_SAMPLES = 480; // 10ms @ 48kHz
+    const SAMPLE_RATE = 24000;
+    const FRAME_SAMPLES = 480; // 20ms @ 24kHz Super-Wideband HD
     const CLOUD_WS_URL = "wss://broker.emqx.io:8084/mqtt";
 
     const localPeerId = Math.random().toString(36).substring(2, 10);
@@ -889,17 +889,7 @@
             const input = e.inputBuffer.getChannelData(0);
             const pcm16 = new Int16Array(input.length);
 
-            let sumSq = 0;
-            for (let i = 0; i < input.length; i++) sumSq += input[i] * input[i];
-            const rms = Math.sqrt(sumSq / input.length);
-
-            gateEnvelope = (rms > gateEnvelope)
-              ? (0.65 * gateEnvelope + 0.35 * rms)
-              : (0.93 * gateEnvelope + 0.07 * rms);
-
-            if (gateEnvelope < 0.0045) return; // DTX
-
-            const hpfAlpha = 0.9889;
+            const hpfAlpha = 0.9795;
             for (let i = 0; i < input.length; i++) {
               const x = input[i];
               const hpfOut = hpfAlpha * (hpfPrevOut + x - hpfPrevIn);
@@ -907,8 +897,8 @@
               hpfPrevOut = hpfOut;
 
               const highComp = hpfOut - clarityPrev;
-              clarityPrev = 0.72 * clarityPrev + 0.28 * hpfOut;
-              let y = (hpfOut + 0.38 * highComp) * 1.35;
+              clarityPrev = 0.68 * clarityPrev + 0.32 * hpfOut;
+              let y = (hpfOut + 0.25 * highComp) * 1.25;
               if (y > 0.95) y = 0.95;
               if (y < -0.95) y = -0.95;
               pcm16[i] = Math.max(-32768, Math.min(32767, Math.floor(y * 32767)));
@@ -960,7 +950,7 @@
       src.buffer = audioBuf;
       src.connect(audioCtx.destination);
       const now = audioCtx.currentTime;
-      if (nextPlayTime < now) nextPlayTime = now + 0.015;
+      if (nextPlayTime < now) nextPlayTime = now + 0.060;
       src.start(nextPlayTime);
       nextPlayTime += audioBuf.duration;
     }

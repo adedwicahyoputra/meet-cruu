@@ -1,7 +1,7 @@
 {
-  "versionCode": 6,
-  "versionName": "3.0.0",
-  "changelog": "Pembaruan Otomatis (OTA In-App Auto-Update), Audio 48.000 Hz Fullband HD + Studio Voice DSP Default, serta dukungan Rapat Lintas Internet (Android, Windows, dan iPhone).",
+  "versionCode": 7,
+  "versionName": "3.1.0",
+  "changelog": "Perbaikan penuh suara mikrofon patah-patah (Smooth 24 kHz Super-Wideband HD 20ms, WifiLock High-Performance, Jitter Buffer Stabil, dan penghapusan Noise Gate pemotong suku kata).",
   "apkUrl": "https://raw.githubusercontent.com/adedwicahyoputra/meet-cruu/main/MeetCruu.apk",
   "exeUrl": "https://raw.githubusercontent.com/adedwicahyoputra/meet-cruu/main/MeetCruu.exe"
 }
