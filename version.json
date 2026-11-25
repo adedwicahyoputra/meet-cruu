@@ -1,7 +1,7 @@
 {
-  "versionCode": 9,
-  "versionName": "3.3.0",
-  "changelog": "Perbaikan total suara terputus-putus: Menghapus bug silenceFrame, menerapkan 16 kHz Wideband 64 kbps (80ms frame = 12,5 paket/detik super stabil), dan Direct UDP Unicast + Cloud Failover.",
-  "apkUrl": "https://raw.githubusercontent.com/adedwicahyoputra/meet-cruu/main/MeetCruu.apk",
-  "exeUrl": "https://raw.githubusercontent.com/adedwicahyoputra/meet-cruu/main/MeetCruu.exe"
+  "versionCode": 10,
+  "versionName": "3.4.0",
+  "changelog": "Perbaikan total suara terputus-putus (16 kHz Wideband 64 kbps, 80ms frame stabil, Direct UDP Unicast + Cloud Failover) serta tombol Cek Pembaruan Instan tanpa jeda cache.",
+  "apkUrl": "https://adedwicahyoputra.github.io/meet-cruu/MeetCruu.apk",
+  "exeUrl": "https://adedwicahyoputra.github.io/meet-cruu/MeetCruu.exe"
 }
