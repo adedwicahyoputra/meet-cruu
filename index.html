@@ -315,7 +315,7 @@
     // ENGINE MEET CRUU EDISI IOS / IPHONE (48.000 Hz FULLBAND HD + STUDIO DSP)
     // 100% Kompatibel dengan MeetCruu.apk (Android) & MeetCruu.exe (Windows)
     // =========================================================================
-    const SAMPLE_RATE = 32000;
+    const SAMPLE_RATE = 16000;
     const FRAME_SAMPLES = 1280; // 40ms @ 32kHz = 128 kbps IMA ADPCM (whatsapp-access-0.6.9 rawMicrophone)
     const INDEX_TABLE = [-1, -1, -1, -1, 2, 4, 6, 8, -1, -1, -1, -1, 2, 4, 6, 8];
     const STEP_TABLE = [
@@ -916,7 +916,7 @@
             }
 
             const seq = audioSeqCounter++;
-            const headBytes = new TextEncoder().encode(currentRoomCode + "|A|" + localPeerId + "|" + seq + "|");
+            const headBytes = new TextEncoder().encode(currentRoomCode + "|B|" + localPeerId + "|" + seq + "|");
             const packet = new Uint8Array(headBytes.length + adpcm.length);
             packet.set(headBytes, 0);
             packet.set(adpcm, headBytes.length);
@@ -954,7 +954,7 @@
     function handleIncomingAudioPacket(bytes) {
       if (!audioCtx || !isRunning) return;
       const headStr = new TextDecoder().decode(bytes.subarray(0, Math.min(64, bytes.length)));
-      const prefix = currentRoomCode + "|A|";
+      const prefix = currentRoomCode + "|B|";
       if (!headStr.startsWith(prefix)) return;
       const sep1 = headStr.indexOf("|", prefix.length);
       if (sep1 < 0) return;
