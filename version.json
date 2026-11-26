@@ -1,7 +1,7 @@
 {
-  "versionCode": 10,
-  "versionName": "3.4.0",
-  "changelog": "Perbaikan total suara terputus-putus (16 kHz Wideband 64 kbps, 80ms frame stabil, Direct UDP Unicast + Cloud Failover) serta tombol Cek Pembaruan Instan tanpa jeda cache.",
+  "versionCode": 11,
+  "versionName": "3.5.0",
+  "changelog": "Perbaikan mikrofon stabil anti-putus-putus ala GameBoard/WebRTC: Hardware Acoustic Echo Cancellation (AEC), Voice Communication Pipeline, Adaptive Jitter Buffer Cushion, dan Wi-Fi High-Performance Lock.",
   "apkUrl": "https://adedwicahyoputra.github.io/meet-cruu/MeetCruu.apk",
   "exeUrl": "https://adedwicahyoputra.github.io/meet-cruu/MeetCruu.exe"
 }
